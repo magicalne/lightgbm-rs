@@ -52,16 +52,16 @@ Please see the `./examples` for details.
 
 |example|link|
 |---|---|
-|binary classification|[link](https://github.com/vaaaaanquish/lightgbm-rs/blob/main/examples/binary_classification/src/main.rs)|
-|multiclass classification|[link](https://github.com/vaaaaanquish/lightgbm-rs/blob/main/examples/multiclass_classification/src/main.rs)|
-|regression|[link](https://github.com/vaaaaanquish/lightgbm-rs/blob/main/examples/regression/src/main.rs)|
+|binary classification|[link](https://github.com/magicalne/lightgbm-rs/blob/main/examples/binary_classification/src/main.rs)|
+|multiclass classification|[link](https://github.com/magicalne/lightgbm-rs/blob/main/examples/multiclass_classification/src/main.rs)|
+|regression|[link](https://github.com/magicalne/lightgbm-rs/blob/main/examples/regression/src/main.rs)|
 
 
 
 # Develop
 
 ```
-git clone --recursive https://github.com/vaaaaanquish/lightgbm-rs
+git clone --recursive https://github.com/magicalne/lightgbm-rs
 ```
 
 ```
