@@ -1,6 +1,10 @@
 # lightgbm-rs
 LightGBM Rust binding
 
+Fork from https://github.com/vaaaaanquish/lightgbm-rs
+
+LightGBM version: V4.3.0
+
 
 # Require
 
@@ -24,6 +28,11 @@ Please see below for details.
 - [LightGBM Installation-Guide](https://lightgbm.readthedocs.io/en/latest/Installation-Guide.html)
 
 # Usage
+
+Add dependency:
+```
+lightgbm = { git = "https://github.com/magicalne/lightgbm-rs.git", branch = "main", features = ["dataframe"] }
+```
 
 Example LightGBM train.
 ```
