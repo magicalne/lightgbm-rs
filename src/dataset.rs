@@ -152,7 +152,8 @@ impl Dataset {
 
         let (m, n) = dataframe.shape();
 
-        let label_series = &dataframe.select_series([label_col_name])?[0].cast(&DataType::Float32)?;
+        let label_series =
+            &dataframe.select_series([label_col_name])?[0].cast(&DataType::Float32)?;
 
         if label_series.null_count() != 0 {
             panic!("Cannot create a dataset with null values, encountered nulls when creating the label array")
@@ -176,7 +177,7 @@ impl Dataset {
             feature_values.push(Vec::with_capacity(n));
         }
 
-        for (_col_idx, series) in dataframe.get_columns().iter().enumerate() {
+        for series in dataframe.get_columns().iter() {
             if series.null_count() != 0 {
                 panic!("Cannot create a dataset with null values, encountered nulls when creating the features array")
             }
