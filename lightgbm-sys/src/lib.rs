@@ -5,4 +5,8 @@
 #![allow(clippy::missing_safety_doc)]
 #![allow(clippy::upper_case_acronyms)]
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+// manually maintained bindings
+// delete useless lines form bindings.rs that break build
+// The `binding.rs` is copied from build target directory
+pub mod bindings;
+pub use bindings::*;
