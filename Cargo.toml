@@ -15,7 +15,9 @@ derive_builder = "0.12"
 serde_json = "1"
 polars = {version = "0.38", optional = true }
 
-
 [features]
 default = []
-dataframe = ["polars"]
+polars = ["dep:polars"]
+openmp = ["lightgbm-sys/openmp"]
+gpu    = ["lightgbm-sys/gpu"]
+cuda   = ["lightgbm-sys/cuda"]

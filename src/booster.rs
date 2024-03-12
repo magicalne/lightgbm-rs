@@ -69,7 +69,10 @@ impl Booster {
     ///     }
     /// };
     /// let bst = Booster::train(dataset, &params).unwrap();
+    ///
     /// ```
+    /// TODO: This is incomplete port from c++. More work is needed.
+    /// See details in `lightgbm-sys/lightgbm/python-package/lightgbm/engine.py`
     pub fn train(dataset: Dataset, parameter: &Value) -> Result<Self> {
         // get num_iterations
         let num_iterations: i64 = if parameter["num_iterations"].is_null() {
@@ -201,9 +204,11 @@ impl Booster {
     }
 
     /// Get Feature Names.
+    ///
+    /// TODO: handle string buffer like `lightgbm-sys/lightgbm/python-package/lightgbm/basic.py`
     pub fn feature_name(&self) -> Result<Vec<String>> {
         let num_feature = self.num_feature()?;
-        let feature_name_length = 32;
+        let feature_name_length = 255; // cannot work on longer feature name
         let mut num_feature_names = 0;
         let mut out_buffer_len = 0;
         let out_strs = (0..num_feature)

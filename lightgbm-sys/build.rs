@@ -15,7 +15,7 @@ fn main() {
     if !lgbm_root.exists() {
         let status = if target.contains("windows") {
             Command::new("cmd")
-                .args(&[
+                .args([
                     "/C",
                     "echo D | xcopy /S /Y lightgbm",
                     lgbm_root.to_str().unwrap(),
@@ -23,7 +23,7 @@ fn main() {
                 .status()
         } else {
             Command::new("cp")
-                .args(&["-r", "lightgbm", lgbm_root.to_str().unwrap()])
+                .args(["-r", "lightgbm", lgbm_root.to_str().unwrap()])
                 .status()
         };
         if let Some(err) = status.err() {
@@ -36,11 +36,20 @@ fn main() {
     }
 
     // CMake
-    let dst = Config::new(&lgbm_root)
+    let mut cfg = Config::new(&lgbm_root);
+    let cfg = cfg
         .profile("Release")
         .uses_cxx11()
-        .define("BUILD_STATIC_LIB", "ON")
-        .build();
+        .cxxflag("-std=c++11")
+        .define("BUILD_STATIC_LIB", "ON");
+
+    #[cfg(not(feature = "openmp"))]
+    let cfg = cfg.define("USE_OPENMP", "OFF");
+    #[cfg(feature = "gpu")]
+    let cfg = cfg.define("USE_GPU", "1");
+    #[cfg(feature = "cude")]
+    let cfg = cfg.define("USE_CUDA", "1");
+    let dst = cfg.build();
 
     // bindgen build
     let bindings = bindgen::Builder::default()
@@ -53,6 +62,7 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    println!("out_path: {:?}", &out_path);
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings.");
@@ -60,10 +70,26 @@ fn main() {
     // link to appropriate C++ lib
     if target.contains("apple") {
         println!("cargo:rustc-link-lib=c++");
-        println!("cargo:rustc-link-lib=dylib=omp");
     } else if target.contains("linux") {
         println!("cargo:rustc-link-lib=stdc++");
-        println!("cargo:rustc-link-lib=dylib=gomp");
+    }
+
+    #[cfg(feature = "openmp")]
+    {
+        println!("cargo:rustc-link-args=-fopenmp");
+        if target.contains("apple") {
+            println!("cargo:rustc-link-lib=dylib=omp");
+            // Link to libomp
+            // If it fails to compile in MacOS, try:
+            // `brew install libomp`
+            // `brew link --force libomp`
+            #[cfg(all(target_arch = "x86_64", target_os = "macos"))]
+            println!("cargo:rustc-link-search=/usr/local/opt/libomp/lib");
+            #[cfg(all(target_arch = "aarch64", target_os = "macos"))]
+            println!("cargo:rustc-link-search=/opt/homebrew/opt/libomp/lib");
+        } else if target.contains("linux") {
+            println!("cargo:rustc-link-lib=dylib=gomp");
+        }
     }
 
     println!("cargo:rustc-link-search={}", out_path.join("lib").display());
